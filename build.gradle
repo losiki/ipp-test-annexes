@@ -1,0 +1,37 @@
+import java.util.zip.*
+
+subprojects.each { subproject -> evaluationDependsOn( subproject.path ) }
+
+task aggregate(type: Copy, dependsOn: subprojects.tasks['build']) {
+    subprojects.each { subproject ->
+        from subproject.tasks['convertJavacard'].capFile
+        into 'build'
+    }
+}
+
+task capToLoadFile(dependsOn : tasks['aggregate']) {
+	subprojects.each { subproject ->
+		inputs.file subproject.tasks['convertJavacard'].capFile
+	}
+	doLast {
+		subprojects.each { subproject ->
+			def capFile = subproject.tasks['convertJavacard'].capFile
+			def components = []
+			ZipFile file = new ZipFile(capFile)
+			file.entries().each { entry ->
+				if (entry.name.endsWith('cap')) {
+				def bytes = file.getInputStream(entry).getBytes()
+					components[bytes[0]] = bytes;
+				}
+			} 
+			def outFile = new File('build/' + capFile.name +'.hex')
+			outFile.withWriter { writer ->
+				for (idx in [1,2,4,3,6,7,8,10,5,9,11]) {
+					if(components[idx] != null) {
+						components[idx].encodeHex().writeTo(writer)
+					}
+				}
+			}
+		}
+	}
+}

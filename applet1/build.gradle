@@ -1,0 +1,34 @@
+apply plugin: 'javacard'
+
+compileJava {
+    sourceCompatibility = '1.5'
+    targetCompatibility = '1.5'
+}
+
+buildscript {
+    repositories {
+        maven { url 'http://releases.marmeladburk.fidesmo.com/' }
+    }
+
+    dependencies {
+        classpath 'com.fidesmo:gradle-javacard:0.2.6'
+    }
+}
+
+dependencies {
+    compile files('../jars/31130-641.jar', '../jars/102241v061200.jar')
+    javacardExport files('../exports/102241v061200', '../exports/31130-641')
+}
+
+javacard {
+    sdkVersion = '2.2.2'
+    cap {
+         aid = '0xA0:0x00:0x00:0x05:0x59:0x10:0x10:0x01'
+         packageName = 'applet1'
+         applet {
+            aid = '0xA0:0x00:0x00:0x05:0x59:0x10:0x10:0x01:0x11:0x22:0x33'
+            className = 'Applet1'
+         }
+         version = '1.0'
+     }
+}
