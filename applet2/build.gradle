@@ -15,17 +15,16 @@ task convert(type: JavaExec, dependsOn: build) {
 	}
 
 	def outDir = "${buildDir}/javacard"
-	ext.capFile = file("${outDir}/applet1/javacard/applet1.cap")
+	ext.capFile = file("${outDir}/applet2/javacard/applet2.cap")
 	
 	outputs.dir(outDir)
 	main = 'com.sun.javacard.converter.Converter'
-	
 	def exports = files('../exports/102241v061200', '../exports/31130-641', "${System.env.JC21_HOME}/api21_export_files", "${System.env.JC21_HOME}/api_export_files")
-
+	
 	// arguments to pass to the application
 	args '-classdir', compileJava.destinationDir, '-out', 'EXP', 'JCA', 'CAP',
 		'-exportpath', exports.asPath,
 		'-d', outDir,
-		'-applet',  '0xA0:0x00:0x00:0x05:0x59:0x10:0x10:0x01:0x11:0x22:0x33', 'applet1.Applet1',
-		'applet1', '0xA0:0x00:0x00:0x05:0x59:0x10:0x10:0x01', '1.0'
+		'-applet',  '0xA0:0x00:0x00:0x05:0x59:0x10:0x10:0x01:0x11:0x22:0x33', 'applet2.Applet2',
+		'applet2', '0xA0:0x00:0x00:0x05:0x59:0x10:0x10:0x01', '1.0'
 }
